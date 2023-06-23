@@ -23,12 +23,25 @@ function renderProducts() {
 
 // Render cart list
 function renderCart() {
- cart = JSON.parse(sessionStorage.getItem("cart"))
-	cart.forEach((product) => {
-    const li = document.createElement("li");
-    li.innerHTML = `${product.name} - $${product.price} <button class="add-to-cart-btn" data-id="${product.id}">Add to Cart</button>`;
-    cartList.appendChild(li);
-  });
+	let sessionVar = sessionStorage.getItem("cart")
+	if (sessionVar){
+		cartList.innerHTML = ''
+		cart = JSON.parse(sessionVar)
+		cart.forEach((product) => {
+		    const li = document.createElement("li");
+		    li.innerHTML = `${product.name} - $${product.price} <button class="remove-cart-btn" data-id="${product.id}">Remove from Cart</button>`;
+		    cartList.appendChild(li);
+	  }); 
+
+		document.querySelectorAll(".remove-cart-btn").forEach((btn)=>{
+	btn.addEventListener("click",(event)=>{
+let itemId = event.target.getAttribute("data-id")
+		removeFromCart(itemId )
+})
+})
+	
+	}
+ 
 }
 
 // Add item to cart
@@ -37,14 +50,23 @@ function addToCart(productId) {
 	let selectedItem = products.find(ele => ele.id==productId)
 	cart.push(selectedItem)
 	sessionStorage.setItem("cart",JSON.stringify(cart))
-}
+	renderCart() 
+} 
 
 
 // Remove item from cart
-function removeFromCart(productId) {}
+function removeFromCart(productId) {
+	cart = cart.filter((ele)=>ele.id != productId)
+	sessionStorage.setItem("cart", JSON.stringify(cart))
+	renderCart()
+}
 
 // Clear cart
-function clearCart() {}
+function clearCart() {
+	cart =[]
+	sessionStorage.setItem("cart", JSON.stringify(cart))
+	renderCart()
+}
 
 // Initial render
 renderProducts();
@@ -56,5 +78,6 @@ let itemId = event.target.getAttribute("data-id")
 		addToCart(itemId )
 })
 })
-	
+
+
 	
